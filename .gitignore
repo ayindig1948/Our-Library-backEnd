@@ -1,0 +1,51 @@
+# ----------------------------------------------------------------------
+# .gitignore for the Library Demo backend (.NET 10 + SSDT SQL project)
+# ----------------------------------------------------------------------
+
+# Build results
+[Bb]in/
+[Oo]bj/
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+build/
+bld/
+[Oo]ut/
+
+# Visual Studio
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.userprefs
+
+# Rider / JetBrains
+.idea/
+
+# SSDT / SQL Server Database Project generated files
+# (keep .sqlproj and the .sql schema; ignore the generated model cache & logs)
+*.dbmdl
+*.jfm
+*.dacpac
+**/Import Schema Logs/
+
+# Logs (Serilog rolling files, etc.)
+[Ll]ogs/
+*.log
+
+# .NET secrets are stored in user-secrets (outside the repo) — but guard
+# against ever committing a local override of appsettings:
+appsettings.*.local.json
+
+# Test results
+[Tt]est[Rr]esults/
+*.trx
+*.coverage
+*.coveragexml
+
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+*.tmp
