@@ -28,6 +28,7 @@ try
     builder.Services.AddDataService();
     builder.AddAuthorizationServices();
     builder.Services.AddCorsService();
+    builder.Services.AddValidationServices();
     var app=builder.Build();
     Log.Information("Hello from Serilog");
          

@@ -9,7 +9,7 @@ namespace TheLibrayApi.Services
             services.AddTransient<ILibraryDataAsceses>(sp =>
 
    ActivatorUtilities.CreateInstance<LibraryDataAsceses>(sp, "LibraryDb"));
-            services.AddValidation();
+            
 
             return services;
         }
