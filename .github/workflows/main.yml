@@ -1,0 +1,31 @@
+name: Deploy Database to Azure SQL
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    runs-on: windows-latest          # SSDT build requires Windows
+    steps:
+      # 1. Get your repo code (the .sqlproj and all the .sql files)
+      - name: Checkout
+        uses: actions/checkout@v4
+
+    
+
+      # 3. Set up MSBuild so it can build the SSDT project
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v2
+
+      # 4. Build the SSDT .sqlproj into a .dacpac
+      - name: Build SSDT project
+        run: msbuild ./LibraryDb/LibraryDb.sqlproj /p:Configuration=Release
+
+      # 5. Publish the built .dacpac to Azure SQL (computes + applies the schema diff)
+      - name: Publish to Azure SQL
+        uses: azure/sql-action@v2.3
+        with:
+          connection-string: ${{secrets.SECRETS_SQL_CONNECTION_STRING }}
+          path: './LibraryDb/bin/Release/LibraryDb.dacpac'
+          action: 'Publish'
