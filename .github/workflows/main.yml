@@ -26,6 +26,6 @@ jobs:
       - name: Publish to Azure SQL
         uses: azure/sql-action@v2.3
         with:
-          connection-string: ${{secrets.SECRETS_SQL_CONNECTION_STRING }}
+          connection-string: ${{secrets.SECRETS_SQL_CONNECTION_STRING}}
           path: './LibraryDb/bin/Release/LibraryDb.dacpac'
           action: 'Publish'
