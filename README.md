@@ -1,4 +1,4 @@
-# Our Library — Backend
+# Our Library  Backend
 
 The backend for the Our Library app: a **.NET 10** minimal Web API secured with **Auth0**,
 backed by a **SQL Server** database project.
