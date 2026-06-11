@@ -87,16 +87,8 @@ namespace TheLibrayApi.EndPoints
         public static async Task<IResult> GetOverdueBooks(int userId, [FromServices] ILibraryDataAsceses libraryData)
         {
             var books = await libraryData.GetOverdueBooks(userId);
-            var bookDtos = new List<BoookItemDto>();
-            foreach (var item in books)
-            {
-                bookDtos.Add(new BoookItemDto(
-                    Title: item.Title,
-                    Id: item.Id,
-                    IsCheckedOut: item.IsCheckedOut,
-                   DueDate: item.DueDate
-                ));
-            }
+            var bookDtos = Mapers.MapToBookItemsDto(books);
+            
             return Results.Ok(bookDtos);
         }
         private static async Task<int> GetUserId(ClaimsPrincipal claim, ILibraryDataAsceses libraryData)
@@ -124,6 +116,7 @@ namespace TheLibrayApi.EndPoints
             {
                 var author = new Author
                 {
+                    
                     FirstName = request.AuthorFirstName,
                     LastName = request.AuthorLastName
                 };
@@ -193,16 +186,8 @@ namespace TheLibrayApi.EndPoints
             try
             {
                 var books = await libraryData.GetCheckedOutBooks(userId);
-                var bookDtos = new List<BoookItemDto>();
-                foreach (var item in books)
-                {
-                    bookDtos.Add(new BoookItemDto(
-                        Title: item.Title,
-                        Id: item.Id,
-                        IsCheckedOut: item.IsCheckedOut,
-                        DueDate: item.DueDate
-                    ));
-                }
+                var bookDtos = Mapers.MapToBookItemsDto(books);
+                
                 return Results.Ok(bookDtos);
 
             }
@@ -218,21 +203,11 @@ namespace TheLibrayApi.EndPoints
             try
             {
 
-                var output = await libraryData.GetBooksToFulfil();
+                var books = await libraryData.GetBooksToFulfil();
 
 
-                var dtoList = new List<BoookItemDto>();
-                foreach (var book in output)
-                {
-                    dtoList.Add(new BoookItemDto(
-
-                        Title: book.Title,
-                        Id: book.Id,
-                        IsCheckedOut: book.IsCheckedOut,
-                        DueDate: book.DueDate,
-                        UserId: book.UserId
-                    ));
-                }
+                var dtoList = Mapers.MapToBookItemsDto(books);
+                
                 logger.LogWarning("getting fulfilld books list ");
                 return Results.Ok(dtoList);
             }

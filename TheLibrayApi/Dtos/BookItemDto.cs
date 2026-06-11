@@ -1,6 +1,6 @@
 ﻿namespace TheLibrayApi.Dtos;
 
-public record BoookItemDto(
+public record BookItemDto(
     string Title,
     int Id,
     bool? IsCheckedOut,
