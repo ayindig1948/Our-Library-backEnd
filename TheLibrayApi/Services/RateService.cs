@@ -5,7 +5,7 @@ namespace TheLibrayApi.Services
 {
     public  static class RateService
     {
-        public static IServiceCollection AddRateService(this IServiceCollection services)
+        public static void AddRateService(this IServiceCollection services)
         {
             services.AddRateLimiter(options =>
             {
@@ -22,7 +22,7 @@ namespace TheLibrayApi.Services
                 });
             });
       
-            return services;
+            
         }
     }
 }
