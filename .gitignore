@@ -49,3 +49,4 @@ appsettings.*.local.json
 .DS_Store
 Thumbs.db
 *.tmp
+/TheLibrayApi/wwwroot/uploads
