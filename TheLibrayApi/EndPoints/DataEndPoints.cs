@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OutputCaching;
 using TheLibrayApi.Dtos;
+using static Auth0.AspNetCore.Authentication.Api.Auth0Constants.CustomDomains.Error;
 
 namespace TheLibrayApi.EndPoints
 {
@@ -14,6 +15,8 @@ namespace TheLibrayApi.EndPoints
     {
         public static async Task<IResult> AddBook([FromBody] AddbookRequst request, [FromServices] ILibraryDataAsceses libraryData, IOutputCacheStore cache, ILogger<Program> logger)
         {
+            logger.LogInformation("NumberOfItems = {N}", request.NumberOfItems);
+
             var author = new Author
             {
                 FirstName = request.AuthorFirstName,
@@ -21,8 +24,7 @@ namespace TheLibrayApi.EndPoints
             };
             await libraryData.AddAuthor(author
             );
-
-            await libraryData.AddBook(new BookModel
+            var book = new BookModel
             {
                 Title = request.Title,
                 Description = request.Description,

@@ -15,5 +15,5 @@ BEGIN
 
     -- Insert statements for procedure here
 	insert into dbo.Book(AuthorId,BookId)values(@autherId,@bookId)
-	update dbo.BookModel set NumberOfCopies=+1 where BookModel.Id=@bookId
+	update dbo.BookModel set NumberOfCopies = NumberOfCopies + 1 where BookModel.Id=@bookId
 	end

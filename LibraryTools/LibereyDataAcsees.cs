@@ -33,8 +33,11 @@ public class LibraryDataAsceses(string connectionStringName,[FromServices] IConf
         return ids.FirstOrDefault();
 
     }
-    public async Task AddBook(BookModel model,int numberOfCopies=1)
+    public async Task AddBook(BookModel model,int numberOfCopies)
     {
+         _logger.LogInformation("AddBook numberOfCopies param = {N}", numberOfCopies);
+        // ...
+    
         try
         {
             var aId = await GetAuthorId(model.Author);
@@ -48,7 +51,7 @@ public class LibraryDataAsceses(string connectionStringName,[FromServices] IConf
             throw new Exception("Could not Add a book model");
         }
     }
-    public async Task AddBookItem(Author author, string title, int numberOfItems = 1)
+    public async Task AddBookItem(Author author, string title, int numberOfItems)
     {
         try
         {
@@ -286,6 +289,8 @@ public class LibraryDataAsceses(string connectionStringName,[FromServices] IConf
         catch (Exception ex)
         {
             _logger.LogError("could not connect: {0} {proc}", ex.ToString() , StoredP);
+
+
             throw new Exception("cold not connect");
         }
     }
