@@ -32,7 +32,8 @@ namespace TheLibrayApi.EndPoints
                 Author = author,
                 
                 
-            },(int)request.NumberOfItems);
+            };
+            await libraryData.AddBook(book,0)
             ;
             await libraryData.AddBookItem(author, request.Title, (int)request.NumberOfItems); 
             await cache.EvictByTagAsync("CasheAll", CancellationToken.None);
