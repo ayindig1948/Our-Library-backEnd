@@ -276,7 +276,7 @@ namespace TheLibrayApi.EndPoints
         public static WebApplication MapDataEndPoints(this WebApplication app)
         {
 
-            app.MapGet("/BooksToFulfil", GetBooksToFulfil).CacheOutput("AdminCash");
+            app.MapGet("/BooksToFulfil", GetBooksToFulfil).CacheOutput("AdminCash").RequireAuthorization("rite:books");
 
             app.MapGet("/getallbooks", GetAllBooks).CacheOutput("CacheAll").RequireRateLimiting("FixedPolicy").RequireAuthorization("read:books");
             app.MapGet("/getaviLebelbooks", GetAviBooks).CacheOutput("CacheAll").RequireRateLimiting("FixedPolicy").RequireAuthorization("read:books");
