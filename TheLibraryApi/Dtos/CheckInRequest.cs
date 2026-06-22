@@ -1,6 +1,6 @@
-﻿namespace TheLibrayApi.Dtos
+﻿namespace TheLibraryApi.Dtos
 {
-   public record CheckInRequst(
+   public record CheckInRequest(
     
       string Title,
       string AuthorFirstName,

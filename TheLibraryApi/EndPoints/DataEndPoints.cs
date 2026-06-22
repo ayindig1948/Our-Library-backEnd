@@ -5,15 +5,15 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OutputCaching;
-using TheLibrayApi.Dtos;
+using TheLibraryApi.Dtos;
 using static Auth0.AspNetCore.Authentication.Api.Auth0Constants.CustomDomains.Error;
 
-namespace TheLibrayApi.EndPoints
+namespace TheLibraryApi.EndPoints
 {
   
     public static class DataEndPoints 
     {
-        public static async Task<IResult> AddBook([FromBody] AddbookRequst request, [FromServices] ILibraryDataAsceses libraryData, IOutputCacheStore cache, ILogger<Program> logger)
+        public static async Task<IResult> AddBook([FromBody] AddBookRequest request, [FromServices] ILibraryDataAcsees libraryData, IOutputCacheStore cache, ILogger<Program> logger)
         {
             logger.LogInformation("NumberOfItems = {N}", request.NumberOfItems);
 
@@ -36,10 +36,10 @@ namespace TheLibrayApi.EndPoints
             await libraryData.AddBook(book,0)
             ;
             await libraryData.AddBookItem(author, request.Title, (int)request.NumberOfItems); 
-            await cache.EvictByTagAsync("CasheAll", CancellationToken.None);
+            await cache.EvictByTagAsync("CacheAll", CancellationToken.None);
             return Results.Ok();
         }
-        public static async Task<IResult> AddBookItem([FromBody] AddBookItemRequest request, [FromServices] ILibraryDataAsceses libraryData, [FromServices] IOutputCacheStore cache)
+        public static async Task<IResult> AddBookItem([FromBody] AddBookItemRequest request, [FromServices] ILibraryDataAcsees libraryData, [FromServices] IOutputCacheStore cache)
         {
             var author = new Author
             {
@@ -47,37 +47,37 @@ namespace TheLibrayApi.EndPoints
                 LastName = request.AuthorLastName
             };
             await libraryData.AddBookItem( author, request.Title, (int)request.NumberOfItems);
-            await cache.EvictByTagAsync("CasheAll", CancellationToken.None);
+            await cache.EvictByTagAsync("CacheAll", CancellationToken.None);
             return Results.Ok();
         }
-        public static async Task<IResult> GetAllBooks([FromServices] ILibraryDataAsceses libraryData)
+        public static async Task<IResult> GetAllBooks([FromServices] ILibraryDataAcsees libraryData)
         {
             var books = await libraryData.GetAllBooks();
-            List<BookModelDto> bookDtos = Mapers.MapToBookDto(books);
+            List<BookModelDto> bookDtos = Mappers.MapToBookDto(books);
             return Results.Ok(bookDtos);
         }
 
-        public static async Task<IResult> GetAviBooks([FromServices] ILibraryDataAsceses libraryData)
+        public static async Task<IResult> GetAviBooks([FromServices] ILibraryDataAcsees libraryData)
         {
             var books = await libraryData.GetAviBooks();
-            List<BookModelDto> bookDtos = Mapers.MapToBookDto(books);
+            List<BookModelDto> bookDtos = Mappers.MapToBookDto(books);
             
             return Results.Ok(bookDtos);
         }
-        public static async Task<IResult> GetAviBooksByCategory(string category, [FromServices] ILibraryDataAsceses libraryData)
+        public static async Task<IResult> GetAviBooksByCategory(string category, [FromServices] ILibraryDataAcsees libraryData)
         {
             var books = await libraryData.GetAviBooksByCategory(category);
-            List<BookModelDto> bookDtos = Mapers.MapToBookDto(books);
+            List<BookModelDto> bookDtos = Mappers.MapToBookDto(books);
             return Results.Ok(bookDtos);
         }
-        public static async Task<IResult> SearchByCategory([FromRoute] string category, [FromServices] ILibraryDataAsceses libraryData)
+        public static async Task<IResult> SearchByCategory([FromRoute] string category, [FromServices] ILibraryDataAcsees libraryData)
         {
             var books = await libraryData.SearchByCategory(category);
-            List<BookModelDto> bookDtos = Mapers.MapToBookDto(books);
+            List<BookModelDto> bookDtos = Mappers.MapToBookDto(books);
             
             return Results.Ok(bookDtos);
         }
-        public static async Task<IResult> GetNumberOfBooks([FromRoute] string authorFirstName, [FromRoute] string authorLastName, [FromServices] ILibraryDataAsceses libraryData)
+        public static async Task<IResult> GetNumberOfBooks([FromRoute] string authorFirstName, [FromRoute] string authorLastName, [FromServices] ILibraryDataAcsees libraryData)
         {
             var author = new Author
             {
@@ -87,14 +87,14 @@ namespace TheLibrayApi.EndPoints
             var numberOfBooks = await libraryData.GetNumberOfBooks(author);
             return Results.Ok(numberOfBooks);
         }
-        public static async Task<IResult> GetOverdueBooks(int userId, [FromServices] ILibraryDataAsceses libraryData)
+        public static async Task<IResult> GetOverdueBooks(int userId, [FromServices] ILibraryDataAcsees libraryData)
         {
             var books = await libraryData.GetOverdueBooks(userId);
-            var bookDtos = Mapers.MapToBookItemsDto(books);
+            var bookDtos = Mappers.MapToBookItemsDto(books);
             
             return Results.Ok(bookDtos);
         }
-        private static async Task<int> GetUserId(ClaimsPrincipal claim, ILibraryDataAsceses libraryData)
+        private static async Task<int> GetUserId(ClaimsPrincipal claim, ILibraryDataAcsees libraryData)
         {
             var user11 = new UserModel
             {
@@ -111,7 +111,7 @@ namespace TheLibrayApi.EndPoints
         public static async Task<IResult> CheckOutBook(
     [FromBody] CheckoutRequest request,
     ClaimsPrincipal user,                         // <-- injected by the framework
-    [FromServices] ILibraryDataAsceses libraryData,
+    [FromServices] ILibraryDataAcsees libraryData,
     [FromServices] ILogger<Program> logger,
     IOutputCacheStore cache)
         {
@@ -141,7 +141,7 @@ namespace TheLibrayApi.EndPoints
             }
         }
 
-        public static async Task<IResult> CheckInBook([FromBody] CheckInRequst requst, ClaimsPrincipal user, ILogger<Program> logger, [FromServices] ILibraryDataAsceses libraryData, IOutputCacheStore cache)
+        public static async Task<IResult> CheckInBook([FromBody] CheckInRequest request, ClaimsPrincipal user, ILogger<Program> logger, [FromServices] ILibraryDataAcsees libraryData, IOutputCacheStore cache)
         {
             int userId;
             try
@@ -156,24 +156,24 @@ namespace TheLibrayApi.EndPoints
             }
             var author = new Author
             {
-                FirstName = requst.AuthorFirstName,
-                LastName = requst.AuthorLastName
+                FirstName = request.AuthorFirstName,
+                LastName = request.AuthorLastName
             };
             try
             {
 
-                await libraryData.CheckInBook(userId, requst.Title, author);
-                logger.LogInformation("User ID {userId} checked in book {bookTitle} by {authorFirstName} {authorLastName}.", userId, requst.Title, author.FirstName, author.LastName);
+                await libraryData.CheckInBook(userId, request.Title, author);
+                logger.LogInformation("User ID {userId} checked in book {bookTitle} by {authorFirstName} {authorLastName}.", userId, request.Title, author.FirstName, author.LastName);
                 await cache.EvictByTagAsync("CacheAll", CancellationToken.None);
                 return Results.Ok();
             }
             catch (Exception ex)
             {
-                logger.LogWarning("Error during check-in for user ID {userId} and book {bookTitle}. Exception: {exceptionMessage}", userId, requst.Title, ex.Message);
+                logger.LogWarning("Error during check-in for user ID {userId} and book {bookTitle}. Exception: {exceptionMessage}", userId, request.Title, ex.Message);
                 return Results.Problem(detail: ex.Message, statusCode: 500);
             }
         }
-        public static async Task<IResult> GetCheckedOutBooks(ClaimsPrincipal user, ILogger<Program> logger, ILibraryDataAsceses libraryData)
+        public static async Task<IResult> GetCheckedOutBooks(ClaimsPrincipal user, ILogger<Program> logger, ILibraryDataAcsees libraryData)
         {
             int userId;
             try
@@ -189,7 +189,7 @@ namespace TheLibrayApi.EndPoints
             try
             {
                 var books = await libraryData.GetCheckedOutBooks(userId);
-                var bookDtos = Mapers.MapToBookItemsDto(books);
+                var bookDtos = Mappers.MapToBookItemsDto(books);
                 
                 return Results.Ok(bookDtos);
 
@@ -201,7 +201,7 @@ namespace TheLibrayApi.EndPoints
 
             }
         }
-        public static async Task<IResult> GetBooksToFulfil(ILibraryDataAsceses libraryData,ILogger<Program> logger)
+        public static async Task<IResult> GetBooksToFulfil(ILibraryDataAcsees libraryData,ILogger<Program> logger)
         {
             try
             {
@@ -209,9 +209,9 @@ namespace TheLibrayApi.EndPoints
                 var books = await libraryData.GetBooksToFulfil();
 
 
-                var dtoList = Mapers.MapToBookItemsDto(books);
+                var dtoList = Mappers.MapToBookItemsDto(books);
                 
-                logger.LogWarning("getting fulfilld books list ");
+                logger.LogWarning("getting fulfilled books list ");
                 return Results.Ok(dtoList);
             }
             catch (Exception ex) {
@@ -220,35 +220,35 @@ namespace TheLibrayApi.EndPoints
             }
            
         }
-        public static async Task<IResult>FulfilBook(ILibraryDataAsceses libraryData,int BookId,IOutputCacheStore cashe) 
+        public static async Task<IResult>FulfilBook(ILibraryDataAcsees libraryData,int BookId,IOutputCacheStore cache) 
         {
             await libraryData.FulfilBook(BookId);
-            await cashe.EvictByTagAsync("CacheAll", CancellationToken.None);
+            await cache.EvictByTagAsync("CacheAll", CancellationToken.None);
             return Results.Ok();    
         }
-        public static async Task<IResult> RemoveBook([FromBody]CheckInRequst requst,[FromServices] ILibraryDataAsceses libraryData, IOutputCacheStore cashe)
+        public static async Task<IResult> RemoveBook([FromBody]CheckInRequest request,[FromServices] ILibraryDataAcsees libraryData, IOutputCacheStore cache)
         {
            var author = new Author
            {
-               FirstName = requst.AuthorFirstName,
-               LastName = requst.AuthorLastName
+               FirstName = request.AuthorFirstName,
+               LastName = request.AuthorLastName
            };
-            await libraryData.RemoveBook(author,requst.Title);
+            await libraryData.RemoveBook(author,request.Title);
 
-            await cashe.EvictByTagAsync("CacheAll", CancellationToken.None);
+            await cache.EvictByTagAsync("CacheAll", CancellationToken.None);
             return Results.Ok();
         }
-        public static async Task<IResult> RemoveBookItem([FromBody]CheckInRequst requst,[FromServices]  ILibraryDataAsceses libraryData,IOutputCacheStore cashe)
+        public static async Task<IResult> RemoveBookItem([FromBody]CheckInRequest request,[FromServices]  ILibraryDataAcsees libraryData,IOutputCacheStore cache)
         {
             var author = new Author
             {
-                FirstName = requst.AuthorFirstName,
-                LastName = requst.AuthorLastName
+                FirstName = request.AuthorFirstName,
+                LastName = request.AuthorLastName
             };
-           var otput= await libraryData.RemoveBookItem(author, requst.Title);
-            if (otput==true)
+           var output= await libraryData.RemoveBookItem(author, request.Title);
+            if (output==true)
             {
-                await cashe.EvictByTagAsync("CacheAll", CancellationToken.None);
+                await cache.EvictByTagAsync("CacheAll", CancellationToken.None);
                 return Results.Ok();
 
             }
@@ -257,12 +257,12 @@ namespace TheLibrayApi.EndPoints
         }
 
         //// the code for add user info for production should be more secure and should not allow anyone to add user but for now we will just add this endpoint for testing purpose
-        //public static async Task<IResult> AddUser([FromBody] AddUserRequst requst, [FromServices] ILibraryDataAsceses libraryData)
+        //public static async Task<IResult> AddUser([FromBody] AddUserRequst request, [FromServices] ILibraryDataAcsees libraryData)
         //{
         //    var user = new UserModel
         //    {
-        //        FirstName = requst.FirstName,
-        //        LastName = requst.LastName
+        //        FirstName = request.FirstName,
+        //        LastName = request.LastName
 
         //    };
         //    var id = await libraryData.AddUser(user);
@@ -276,15 +276,15 @@ namespace TheLibrayApi.EndPoints
         public static WebApplication MapDataEndPoints(this WebApplication app)
         {
 
-            app.MapGet("/BooksToFulfil", GetBooksToFulfil).CacheOutput("AdminCash").RequireAuthorization("write:books");
+            app.MapGet("/BooksToFulfil", GetBooksToFulfil).CacheOutput("AdminCache").RequireAuthorization("write:books");
 
             app.MapGet("/getallbooks", GetAllBooks).CacheOutput("CacheAll").RequireRateLimiting("FixedPolicy").RequireAuthorization("read:books");
             app.MapGet("/getaviLebelbooks", GetAviBooks).CacheOutput("CacheAll").RequireRateLimiting("FixedPolicy").RequireAuthorization("read:books");
             app.MapGet("/getaviLebelbooksbycategory/{category}", GetAviBooksByCategory).CacheOutput("CacheAll").RequireRateLimiting("FixedPolicy").RequireAuthorization("read:books");
             app.MapGet("/searchbycategory/{category}", SearchByCategory).CacheOutput("CacheAll").RequireRateLimiting("FixedPolicy").RequireAuthorization("read:books");
             app.MapGet("/getnumberofbooks/{authorFirstName}/{authorLastName}", GetNumberOfBooks).CacheOutput("CacheAll").RequireRateLimiting("FixedPolicy").RequireAuthorization("read:books");
-            app.MapGet("/getoverduebooks/{userId}", GetOverdueBooks).CacheOutput("AdmiCash").RequireAuthorization("read:books");
-            app.MapGet("/getcheckedoutbooks", GetCheckedOutBooks).CacheOutput("CashAll").RequireAuthorization("read:books").RequireRateLimiting("FixedPolicy");
+            app.MapGet("/getoverduebooks/{userId}", GetOverdueBooks).CacheOutput("AdminCache").RequireAuthorization("read:books");
+            app.MapGet("/getcheckedoutbooks", GetCheckedOutBooks).CacheOutput("CacheAll").RequireAuthorization("read:books").RequireRateLimiting("FixedPolicy");
             app.MapPost("/addbookitem", AddBookItem).RequireAuthorization("write:books");
             app.MapPost("/addbook", AddBook).RequireAuthorization("write:books");
             app.MapPut("/checkoutbook", CheckOutBook).RequireAuthorization("read:books");

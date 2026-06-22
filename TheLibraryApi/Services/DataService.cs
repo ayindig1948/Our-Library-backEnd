@@ -1,12 +1,12 @@
 ﻿using LibraryTools;
 
-namespace TheLibrayApi.Services
+namespace TheLibraryApi.Services
 {
     public static  class DataService
     {
         public static IServiceCollection AddDataService(this IServiceCollection services)
         {
-            services.AddTransient<ILibraryDataAsceses>(sp =>
+            services.AddTransient<ILibraryDataAcsees>(sp =>
 
    ActivatorUtilities.CreateInstance<LibraryDataAsceses>(sp, "LibraryDb"));
             

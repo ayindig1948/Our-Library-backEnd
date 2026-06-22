@@ -1,11 +1,11 @@
 ﻿using Serilog;
 using Serilog.Extensions.Hosting;
 
-namespace TheLibrayApi.Serves
+namespace TheLibraryApi.Services
 {
-    public static class LoogingService      
+    public static class LoggingService      
     {
-        public static IServiceCollection AddLoogingServices(this WebApplicationBuilder builder)
+        public static IServiceCollection AddLoggingServices(this WebApplicationBuilder builder)
         {
             builder.Services.AddSerilog((sp, lg) =>
              {
@@ -14,7 +14,7 @@ namespace TheLibrayApi.Serves
              });
             return builder.Services;
         }
-        public static void UseLoogingServices(this WebApplication app) =>
+        public static void UseLoggingServices(this WebApplication app) =>
         app.UseSerilogRequestLogging(options =>
     {
         options.EnrichDiagnosticContext = (diagnosticContext, httpContext) =>

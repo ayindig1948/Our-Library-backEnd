@@ -1,4 +1,4 @@
-﻿namespace TheLibrayApi.Services
+﻿namespace TheLibraryApi.Services
 {
     public static class ValidationService
     {

@@ -4,5 +4,5 @@
     <Deploy />
   </Project>
   <Project Path="LibraryTools/LibraryTools.csproj" />
-  <Project Path="TheLibrayApi/TheLibrayApi.csproj" />
+  <Project Path="TheLibraryApi/TheLibraryApi.csproj" />
 </Solution>

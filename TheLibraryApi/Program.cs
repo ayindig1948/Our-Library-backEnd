@@ -3,9 +3,8 @@ using LibraryTools;
 using Microsoft.AspNetCore.RateLimiting;
 using Scalar.AspNetCore;
 using Serilog;
-using TheLibrayApi.EndPoints;
-using TheLibrayApi.Serves;
-using TheLibrayApi.Services;
+using TheLibraryApi.EndPoints;
+using TheLibraryApi.Services;
 using Auth0.AspNetCore.Authentication.Api;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 
@@ -22,7 +21,7 @@ try
     // Add services to the container.
     // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
     builder.Services.AddOpenApi();
-  builder.AddLoogingServices();
+  builder.AddLoggingServices();
     builder.Services.AddRateService();
     builder.Services.AddCashingService();
     builder.Services.AddDataService();
@@ -43,7 +42,7 @@ try
         });
     }
     
-    app.UseLoogingServices();
+    app.UseLoggingServices();
     app.UseHttpsRedirection();
     app.UseCors();
     app.UseAuthentication();

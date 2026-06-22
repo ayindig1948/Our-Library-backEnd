@@ -1,6 +1,6 @@
 ﻿using LibraryTools.Models;
 
-namespace TheLibrayApi.Dtos;
+namespace TheLibraryApi.Dtos;
 
 public record BookModelDto(
     string Title,

@@ -1,4 +1,4 @@
-﻿namespace TheLibrayApi.Dtos
+﻿namespace TheLibraryApi.Dtos
 {
     public record CheckoutRequest(
      string Title,

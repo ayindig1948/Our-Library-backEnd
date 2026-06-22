@@ -18,7 +18,7 @@ backed by a **SQL Server** database project.
 
 | Project | Description |
 | --- | --- |
-| `TheLibrayApi` | Minimal API endpoints — Auth0 JWT auth, CORS, caching, rate limiting, Serilog logging |
+| `TheLibraryApi` | Minimal API endpoints — Auth0 JWT auth, CORS, caching, rate limiting, Serilog logging |
 | `LibraryTools` | Data-access library and domain models |
 | `LibraryTools.Tests` | Unit tests for `LibraryTools` |
 | `LibraryDb` | SQL Server Database Project — tables and stored procedures |
@@ -36,7 +36,7 @@ variables in production). `appsettings.json` ships with empty placeholders:
 Set them locally with:
 
 ```bash
-cd TheLibrayApi
+cd TheLibraryApi
 dotnet user-secrets set "ConnectionStrings:LibraryDb" "<your connection string>"
 dotnet user-secrets set "Auth0:Domain"   "<your-tenant>.us.auth0.com"
 dotnet user-secrets set "Auth0:Audience" "<your-api-audience>"
@@ -46,7 +46,7 @@ dotnet user-secrets set "Auth0:Audience" "<your-api-audience>"
 
 ```bash
 dotnet restore
-dotnet run --project TheLibrayApi
+dotnet run --project TheLibraryApi
 ```
 
 The API validates the Auth0 JWT (signature, audience, expiry) on protected endpoints, so

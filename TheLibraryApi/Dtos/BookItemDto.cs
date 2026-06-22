@@ -1,4 +1,4 @@
-﻿namespace TheLibrayApi.Dtos;
+﻿namespace TheLibraryApi.Dtos;
 
 public record BookItemDto(
     string Title,

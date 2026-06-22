@@ -1,7 +1,7 @@
 ﻿using System.Threading.RateLimiting;
 using Microsoft.AspNetCore.RateLimiting;
 
-namespace TheLibrayApi.Services
+namespace TheLibraryApi.Services
 {
     public  static class RateService
     {

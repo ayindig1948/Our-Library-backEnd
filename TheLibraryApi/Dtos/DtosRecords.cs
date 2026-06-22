@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace TheLibrayApi.Dtos;
-public record AddbookRequst(
+namespace TheLibraryApi.Dtos;
+public record AddBookRequest(
     [MaxLength(50, ErrorMessage = "Title cannot be longer than 50 characters")]
     
 string Title,

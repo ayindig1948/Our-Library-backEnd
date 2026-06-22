@@ -2,7 +2,7 @@
 
 namespace LibraryTools
 {
-    public interface ILibraryDataAsceses
+    public interface ILibraryDataAcsees
     {
         Task<int> AddAuthor(Author author);
         Task AddBook(BookModel model,int numberOfCopie);

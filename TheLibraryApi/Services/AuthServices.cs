@@ -1,6 +1,6 @@
 ﻿using Auth0.AspNetCore.Authentication.Api;
 
-namespace TheLibrayApi.Services
+namespace TheLibraryApi.Services
 {
     public static class AuthServices
     {

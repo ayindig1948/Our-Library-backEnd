@@ -8,10 +8,10 @@ permissions:
   contents: read
 env:
   AZURE_WEBAPP_NAME: our-library-api
-  AZURE_WEBAPP_PACKAGE_PATH: TheLibrayApi\publish
+  AZURE_WEBAPP_PACKAGE_PATH: TheLibraryApi\publish
   CONFIGURATION: Release
   DOTNET_CORE_VERSION: 10.0.x
-  WORKING_DIRECTORY: TheLibrayApi
+  WORKING_DIRECTORY: TheLibraryApi
 jobs:
   build:
     runs-on: windows-latest

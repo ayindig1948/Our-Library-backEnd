@@ -1,10 +1,10 @@
 ﻿using LibraryTools.Models;
 using Microsoft.VisualBasic;
-using TheLibrayApi.Dtos;
+using TheLibraryApi.Dtos;
 
-namespace TheLibrayApi.EndPoints
+namespace TheLibraryApi.EndPoints
 {
-    public static class Mapers
+    public static class Mappers
     {
 
         public static List<BookModelDto> MapToBookDto(List<BookModel> books)

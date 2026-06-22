@@ -9,7 +9,7 @@ using Microsoft.Extensions.Logging;
 
 namespace LibraryTools;
 
-public class LibraryDataAsceses(string connectionStringName,[FromServices] IConfiguration configuration, ILogger<LibraryDataAsceses> logger) : ILibraryDataAsceses
+public class LibraryDataAsceses(string connectionStringName,[FromServices] IConfiguration configuration, ILogger<LibraryDataAsceses> logger) : ILibraryDataAcsees
 {
     private readonly string _connectionString = configuration.GetConnectionString(connectionStringName)
           ?? throw new ArgumentException("Connection string not found.");
