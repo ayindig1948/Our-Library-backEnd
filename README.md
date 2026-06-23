@@ -20,7 +20,6 @@ backed by a **SQL Server** database project.
 | --- | --- |
 | `TheLibraryApi` | Minimal API endpoints — Auth0 JWT auth, CORS, caching, rate limiting, Serilog logging |
 | `LibraryTools` | Data-access library and domain models |
-| `LibraryTools.Tests` | Unit tests for `LibraryTools` |
 | `LibraryDb` | SQL Server Database Project — tables and stored procedures |
 
 ## Configuration & secrets
