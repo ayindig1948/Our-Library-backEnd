@@ -296,7 +296,7 @@ namespace TheLibraryApi.EndPoints
             app.MapPost("/addbookitem", AddBookItem).RequireAuthorization("write:books");
             app.MapPost("/addbook", AddBook).RequireAuthorization("write:books");
             app.MapPut("/checkoutbook", CheckOutBook).RequireAuthorization("read:books");
-            app.MapPut("/editbook", EditBooks);
+            app.MapPut("/editbook", EditBooks).RequireAuthorization("write:books");
             app.MapPut("/FulfilBook/{BookId}", FulfilBook).RequireAuthorization("write:books");
             app.MapPut("/checkinbook", CheckInBook).RequireAuthorization("read:books");
             app.MapDelete("/removebook", RemoveBook).RequireAuthorization("write:books");
