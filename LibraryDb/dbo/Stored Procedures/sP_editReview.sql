@@ -1,6 +1,6 @@
 ﻿CREATE PROCEDURE [dbo].[sP_editDescription]
 	@description nvarchar(250),
-	@boookId int
+	@bookId int
 AS
-	update dbo.BookModel set Description =@description where Id=@boookId
+	update dbo.BookModel set Description =@description where Id=@bookId
 RETURN 0

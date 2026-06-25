@@ -10,6 +10,7 @@ namespace LibraryTools
         Task<int> AddUser(UserModel user);
         Task CheckInBook(int userId, string title, Author author);
         Task<int?> CheckOutBook(Author author, string title, int userId);
+        Task EditBook(int bookId, string? title, string? description,string?category);
         Task FulfilBook(int bookId);
         Task<List<BookModel>> GetAllBooks();
         Task<List<BookModel>> GetAviBooks();

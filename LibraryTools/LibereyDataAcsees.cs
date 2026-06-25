@@ -70,6 +70,34 @@ public class LibraryDataAsceses(string connectionStringName,[FromServices] IConf
             throw new Exception("Could not Add a book Item");
         }
     }
+    public async Task EditBook(int bookId,string? title,string? description,string?category)
+    {
+        _logger.LogInformation("eddting book {b}", bookId);
+        try
+        {
+
+            if (!string.IsNullOrWhiteSpace(title))
+            {
+                await SendData("sP_editTitle", new { bookId, title });
+                _logger.LogWarning("edit title of book {b}", bookId);
+            }
+            if (!string.IsNullOrWhiteSpace(description))
+            {
+                await SendData("sP_editDescription", new { bookId,description });
+                _logger.LogWarning("edit description of book {b}", bookId);
+            }
+            if (!string.IsNullOrWhiteSpace(category))
+            {
+                await SendData("sP_editCategory", new { bookId,category });
+                _logger.LogWarning("edit category  of book {b}", bookId);
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex.ToString(),"Edit failed for book {BookId}", bookId);
+            throw new Exception("could not edit");
+        }
+    }
     public async Task<List<BookModel>> GetAllBooks()
     {
         try
