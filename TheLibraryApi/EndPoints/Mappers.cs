@@ -13,6 +13,7 @@ namespace TheLibraryApi.EndPoints
             foreach (var item in books)
             {
                 bookDtos.Add(new BookModelDto(
+                    Id: item.Id,
                     Title: item.Title,
                     Description: item.Description,
                     Category: item.Category,

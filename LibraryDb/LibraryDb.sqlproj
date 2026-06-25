@@ -87,5 +87,7 @@
     <Build Include="dbo\Stored Procedures\sP_getAllAvlebelBooks_1.sql" />
     <Build Include="dbo\Stored Procedures\sP_GetBookId_1.sql" />
     <Build Include="dbo\Stored Procedures\sP_editReview.sql" />
+    <Build Include="dbo\Stored Procedures\sP_editTitle.sql" />
+    <Build Include="dbo\Stored Procedures\sP_editCategory.sql" />
   </ItemGroup>
 </Project>

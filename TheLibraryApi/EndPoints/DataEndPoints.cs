@@ -50,6 +50,14 @@ namespace TheLibraryApi.EndPoints
             await cache.EvictByTagAsync("CacheAll", CancellationToken.None);
             return Results.Ok();
         }
+        public static async Task<IResult> EditBooks([FromBody]EditRequst requst, [FromServices]ILibraryDataAcsees libraryData,ILogger<Program> logger, IOutputCacheStore cache)
+        {
+            await libraryData.EditBook(requst.BookId, requst.Title, requst.Description ,requst.Category);
+            await cache.EvictByTagAsync("CacheAll", CancellationToken.None);
+
+            return Results.Ok();
+          
+        }
         public static async Task<IResult> GetAllBooks([FromServices] ILibraryDataAcsees libraryData)
         {
             var books = await libraryData.GetAllBooks();
@@ -288,6 +296,7 @@ namespace TheLibraryApi.EndPoints
             app.MapPost("/addbookitem", AddBookItem).RequireAuthorization("write:books");
             app.MapPost("/addbook", AddBook).RequireAuthorization("write:books");
             app.MapPut("/checkoutbook", CheckOutBook).RequireAuthorization("read:books");
+            app.MapPut("/editbook", EditBooks);
             app.MapPut("/FulfilBook/{BookId}", FulfilBook).RequireAuthorization("write:books");
             app.MapPut("/checkinbook", CheckInBook).RequireAuthorization("read:books");
             app.MapDelete("/removebook", RemoveBook).RequireAuthorization("write:books");
