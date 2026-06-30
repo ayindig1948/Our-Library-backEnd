@@ -23,10 +23,18 @@ namespace TheLibraryApi.Services
             diagnosticContext.Set("UserAgent", httpContext.Request.Headers.UserAgent.ToString());
         };
 
-        // Exclude health check endpoints from request logs
+        // Exclude health check endpoints and Azure "Always On" keep-alive pings from request logs
         options.GetLevel = (httpContext, elapsed, ex) =>
             {
+                if (ex != null)
+                    return Serilog.Events.LogEventLevel.Error;
+
                 if (httpContext.Request.Path.StartsWithSegments("/health"))
+                    return Serilog.Events.LogEventLevel.Verbose;
+
+                // Azure App Service "Always On" pings the root with User-Agent "AlwaysOn"
+                var userAgent = httpContext.Request.Headers.UserAgent.ToString();
+                if (userAgent.Contains("AlwaysOn", StringComparison.OrdinalIgnoreCase))
                     return Serilog.Events.LogEventLevel.Verbose;
 
                 return elapsed > 500
