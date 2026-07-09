@@ -7,6 +7,7 @@ using TheLibraryApi.EndPoints;
 using TheLibraryApi.Services;
 using Auth0.AspNetCore.Authentication.Api;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using TheLibraryApi.Mcp;
 
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
@@ -28,6 +29,7 @@ try
     builder.AddAuthorizationServices();
     builder.Services.AddCorsService();
     builder.Services.AddValidationServices();
+    builder.Services.AddMcpServices();
     var app=builder.Build();
     Log.Information("Hello from Serilog");
          
@@ -43,13 +45,17 @@ try
     }
     
     app.UseLoggingServices();
-    app.UseHttpsRedirection();
+    if (!app.Environment.IsDevelopment())
+    {
+        app.UseHttpsRedirection();
+    }
     app.UseCors();
     app.UseAuthentication();
     app.UseAuthorization();
     app.UseRateLimiter();
 
    app.UseCashingService();
+    app.MapMcpServer();
 
     app.MapGet("/health", () => Results.Ok(new { status = "Healthy" }))
         .WithName("HealthCheck")

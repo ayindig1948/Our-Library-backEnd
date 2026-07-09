@@ -7,7 +7,7 @@ public static class CorsService
         {
             p.AddDefaultPolicy(o =>
             {
-                o.WithOrigins("http://localhost:5173").AllowAnyMethod().AllowAnyHeader();
+                o.WithOrigins("http://localhost:5173", "http://localhost:6274").AllowAnyMethod().AllowAnyHeader();
             });
         });
         return services;

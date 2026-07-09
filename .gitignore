@@ -50,3 +50,4 @@ appsettings.*.local.json
 Thumbs.db
 *.tmp
 /TheLibrayApi/wwwroot/uploads
+/TheLibraryApi/changes.pdf

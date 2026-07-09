@@ -102,7 +102,7 @@ namespace TheLibraryApi.EndPoints
             
             return Results.Ok(bookDtos);
         }
-        private static async Task<int> GetUserId(ClaimsPrincipal claim, ILibraryDataAcsees libraryData)
+        public static async Task<int> GetUserId(ClaimsPrincipal claim, ILibraryDataAcsees libraryData)
         {
             var user11 = new UserModel
             {
@@ -135,11 +135,16 @@ namespace TheLibraryApi.EndPoints
                 var userId = await GetUserId(user, libraryData);   // pass the real principal
                 var result = await libraryData.CheckOutBook(author, request.Title, userId);
                 if 
-                (result is null) {
+                (result is null ) {
                     logger.LogWarning("That book {book} isn't available to check out.", request.Title);
     return Results.Conflict("That book isn't available to check out.");
                     
                   }
+                if (result==0)
+                {
+                    return Results.Conflict("User has too many overdue books");
+                }
+             
                 await cache.EvictByTagAsync("CacheAll", CancellationToken.None);
                 return Results.Ok(result);
             }
