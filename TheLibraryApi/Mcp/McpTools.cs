@@ -31,8 +31,8 @@ public class McpTools
     }
 
 
-    [McpServerTool,Description(" a method to add a book and check if the author is there if not it adds it")]
-    public async Task<IResult> AddBook(AddBookRequest request)
+    [McpServerTool, Description(" a method to add a book and check if the author is there if not it adds it")]
+    public async Task<string> AddBook(AddBookRequest request)
     {
         _logger.LogInformation("NumberOfItems = {N}", request.NumberOfItems);
 
@@ -41,27 +41,36 @@ public class McpTools
             FirstName = request.AuthorFirstName,
             LastName = request.AuthorLastName
         };
-        await _dataAcsees.AddAuthor(author
-        );
-        var book = new BookModel
+        try
         {
-            Title = request.Title,
-            Description = request.Description,
-            Category = request.Category,
-            Author = author,
+            await _dataAcsees.AddAuthor(author
+            );
+            var book = new BookModel
+            {
+                Title = request.Title,
+                Description = request.Description,
+                Category = request.Category,
+                Author = author,
 
 
-        };
-        await _dataAcsees.AddBook(book, 0)
-        ;
-        _logger.LogInformation("Book added: {Title} by {Author} by llm", book.Title, $"{author.FirstName} {author.LastName}");
-        await _dataAcsees.AddBookItem(author, request.Title, (int)request.NumberOfItems);
-        await _outputCacheStore.EvictByTagAsync("CacheAll", CancellationToken.None);
-        return Results.Ok();
+            };
+            await _dataAcsees.AddBook(book, 0)
+            ;
+            _logger.LogInformation("Book added: {Title} by {Author} by llm", book.Title, $"{author.FirstName} {author.LastName}");
+            await _dataAcsees.AddBookItem(author, request.Title, (int)request.NumberOfItems);
+            await _outputCacheStore.EvictByTagAsync("CacheAll", CancellationToken.None);
+            return $"Book '{book.Title}' by {author.FirstName} {author.LastName} added successfully with {request.NumberOfItems} copies.";
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError("Error adding book: {exceptionMessage} by llm", ex.Message);
+            return $"Error adding book: {request.Title}";
+        }
     }
     [McpServerTool, Description(" a method to add a book copy of an existing book")]
-    public  async Task<IResult> AddBookItem(string authorFirstName, string authorLastName, string title, int numberOfItems)
+    public  async Task<string> AddBookItem(string authorFirstName, string authorLastName, string title, int numberOfItems)
     {
+            try { 
         var author = new Author
         {
             FirstName = authorFirstName,
@@ -69,10 +78,16 @@ public class McpTools
         };
         await _dataAcsees.AddBookItem(author, title, numberOfItems);
         await _outputCacheStore.EvictByTagAsync("CacheAll", CancellationToken.None);
-        return Results.Ok();
-    }
+        return $"Added {numberOfItems} copies of '{title}' by {authorFirstName} {authorLastName}.";
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Error adding book item: {exceptionMessage} by llm", ex.Message);
+                return $"Error adding book item: {ex.Message}";
+            }
+        }
     [McpServerTool, Description(" a method to check out a book copy")]
-    public  async Task<IResult> CheckOutBook(CheckoutRequest request )
+    public  async Task<string> CheckOutBook(CheckoutRequest request )
   
 
 
@@ -92,24 +107,25 @@ public class McpTools
             (result is null)
             {
                 _logger.LogWarning("That book {book} isn't available to check out.", request.Title);
-                return Results.Conflict("That book isn't available to check out.");
+                return $"That book '{request.Title}' isn't available to check out.";
 
             }
             if (result == 0)
             {
-                return Results.Conflict("User has too many overdue books");
+                return $"User has too many overdue books.";
             }
 
             await _outputCacheStore.EvictByTagAsync("CacheAll", CancellationToken.None);
-            return Results.Ok(result);
+            return $"Book '{request.Title}' checked out successfully.";
         }
         catch (Exception ex)
         {
-            return Results.Problem(detail: ex.Message, statusCode: 500);
+           _logger.LogError("Error checking out book: {exceptionMessage} by llm", ex.Message);
+         
         }
     }
     [McpServerTool, Description(" a method to check in a book copy")]
-    public  async Task<IResult> CheckInBook( CheckInRequest request)
+    public  async Task<string> CheckInBook( CheckInRequest request)
     {
         int userId;
         try
@@ -120,7 +136,7 @@ public class McpTools
         catch (Exception ex)
         {
             _logger.LogWarning("Unable to determine user ID from claims. Exception: {exceptionMessage}", ex.Message);
-            return Results.BadRequest("Unable to determine user ID. Please ensure you are authenticated.");
+            return $"Unable to determine user ID from claims. "; 
         }
         var author = new Author
         {
@@ -133,16 +149,16 @@ public class McpTools
             await _dataAcsees.CheckInBook(userId, request.Title, author);
             _logger.LogInformation("User ID {userId} checked in book {bookTitle} by {authorFirstName} {authorLastName} by the llm.", userId, request.Title, author.FirstName, author.LastName);
             await _outputCacheStore.EvictByTagAsync("CacheAll", CancellationToken.None);
-            return Results.Ok();
+            return $"Book '{request.Title}' checked in successfully."; 
         }
         catch (Exception ex)
         {
             _logger.LogWarning("Error during check-in for user ID {userId} and book {bookTitle}. Exception: {exceptionMessage} by the llm.", userId, request.Title, ex.Message);
-            return Results.Problem(detail: ex.Message, statusCode: 500);
+            return $"Error checking in book: {request.Title}";
         }
     }
     [McpServerTool, Description(" a method to get the list of books that need to be fulfilled")]
-    public async  Task<IResult> GetBooksToFulfil()
+    public async  Task<string> GetBooksToFulfil()
     {
         try
         {
@@ -153,38 +169,54 @@ public class McpTools
             var dtoList = Mappers.MapToBookItemsDto(books);
 
             _logger.LogWarning("getting fulfilled books list by the llm ");
-            return Results.Ok(dtoList);
+            return $"Books to fulfill: {string.Join(", ", dtoList.Select(b => b.Title))}"   
         }
         catch (Exception ex)
         {
             _logger.LogError("could not get list to fulfill by the llm: {exceptionMessage}", ex.Message);
-            return Results.Problem();
+            return $"Error retrieving books to fulfill: {ex.Message}";
         }
 
     }
     [McpServerTool,Description(" a method to fulfill a book copy")]
-    public  async Task<IResult> FulfilBook( int BookId )
+    public  async Task<string> FulfilBook( int BookId )
     {
-        await _dataAcsees.FulfilBook(BookId);
-        await _outputCacheStore.EvictByTagAsync("CacheAll", CancellationToken.None);
-        return Results.Ok();
+        try
+        {
+            await _dataAcsees.FulfilBook(BookId);
+            await _outputCacheStore.EvictByTagAsync("CacheAll", CancellationToken.None);
+            return $"Book with ID {BookId} has been fulfilled.";
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError("Error fulfilling book with ID {BookId}: {exceptionMessage} by the llm", BookId, ex.Message);
+            return $"Error fulfilling book with ID {BookId}: {ex.Message}";
+        }
     }
     [McpServerTool, Description(" a method to remove a book and all its copies")]
-    public  async Task<IResult> RemoveBook(CheckInRequest request)
+    public async Task<string> RemoveBook(CheckInRequest request)
     {
         var author = new Author
         {
             FirstName = request.AuthorFirstName,
             LastName = request.AuthorLastName
         };
-        await _dataAcsees.RemoveBook(author, request.Title);
-        _logger.LogInformation("Book removed: {Title} by {Author} by the llm", request.Title, $"{author.FirstName} {author.LastName}"); 
+        try
+        {
 
-        await _outputCacheStore .EvictByTagAsync("CacheAll", CancellationToken.None);
-        return Results.Ok();
+
+            await _dataAcsees.RemoveBook(author, request.Title);
+            _logger.LogInformation("Book removed: {Title} by {Author} by the llm", request.Title, $"{author.FirstName} {author.LastName}");
+
+            await _outputCacheStore.EvictByTagAsync("CacheAll", CancellationToken.None);
+            return $"Book removed: {request.Title} by {author.FirstName} {author.LastName}";
+        } catch (Exception ex) {
+            _logger.LogError("Error removing book: {exceptionMessage} by the llm", ex.Message);
+            return $"Error removing book: {request.Title} by {author.FirstName} {author.LastName}";
+        }
     }
-    [McpServerTool(), Description(" a method to edit a book's details")]
-    public async Task<IResult> EditBooks(EditRequst requst)
+    [McpServerTool, Description(" a method to edit a book's details")]
+    public async Task<string> EditBooks(EditRequst requst)
     {
         try
         {
@@ -192,26 +224,26 @@ public class McpTools
             await _dataAcsees.EditBook(requst.BookId, requst.Title, requst.Description, requst.Category);
             await _outputCacheStore.EvictByTagAsync("CacheAll", CancellationToken.None);
             _logger.LogInformation("Book edited: {Title} by the llm", requst.Title);
-            return Results.Ok();
+            return $"Book edited: {requst.Title}";
         }
         catch (Exception ex)
         {
             _logger.LogError("Error editing book: {exceptionMessage} by the llm", ex.Message);
-            return Results.Problem(statusCode: 500);
+            return $"Error editing book: {requst.Title}";
 
         }
     }
     [McpServerTool, Description(" a method to get all books in the library")]
-    public  async Task<IResult> GetAllBooks()
+    public  async Task<string> GetAllBooks()
     {
         var books = await _dataAcsees.GetAllBooks();
         List<BookModelDto> bookDtos = Mappers.MapToBookDto(books);
         _logger.LogInformation("Retrieved all books by the llm");
-        return Results.Ok(bookDtos);
+        return $"All books: {string.Join(", ", bookDtos.Select(b => b.Title))}";
     }
 
     [McpServerTool, Description(" a method to remove a book copy")]
-    public  async Task<IResult> RemoveBookItem([Description("book title and author name")]CheckInRequest
+    public  async Task<string> RemoveBookItem([Description("book title and author name")]CheckInRequest
         request)
     {
         var author = new Author
@@ -219,18 +251,29 @@ public class McpTools
             FirstName = request.AuthorFirstName,
             LastName = request.AuthorLastName
         };
+        try
+        {
+
+       
                 var output = await _dataAcsees.RemoveBookItem(author, request.Title);
                 if (output == true)
                 {
             await _outputCacheStore .EvictByTagAsync("CacheAll", CancellationToken.None);
             _logger.LogInformation("Book item removed: {Title} by {Author} by the llm", request.Title, $"{author.FirstName} {author.LastName}");
-            return Results.Ok();
+            return $"Book item removed: {request.Title} by {author.FirstName} {author.LastName}";
 
         }
-        return Results.NotFound("item not found");
+                
+        return $"Item not found: {request.Title}";
 
     }
-    public async Task<IResult> GetNumberOfBooks(string authorFirstName, string authorLastName)
+        catch (Exception ex)
+        {
+            _logger.LogError("Error removing book item: {exceptionMessage} by the llm", ex.Message);
+            return $"Error removing book item: {request.Title} by {author.FirstName} {author.LastName}";
+        }
+    }
+    public async Task<int> GetNumberOfBooks(string authorFirstName, string authorLastName)
 {
     var author = new Author
     {
@@ -238,24 +281,24 @@ public class McpTools
         LastName = authorLastName
     };
     var numberOfBooks = await _dataAcsees.GetNumberOfBooks(author);
-    return Results.Ok(numberOfBooks);
+    return numberOfBooks;
 }
-    public async Task<IResult> GetAviBooksByCategory(string category)
+    public async Task<List<string>> GetAviBooksByCategory(string category)
     {
         try { 
             var books = await _dataAcsees.GetAviBooksByCategory(category);
         List<BookModelDto> bookDtos = Mappers.MapToBookDto(books);
 
         _logger.LogInformation("Retrieved available books in category: {Category} by the llm", category);
-        return Results.Ok(bookDtos);
-        }
+        return bookDtos.Select(b => b.Title).ToList();
+        }   
         catch
         {
             _logger.LogWarning("No available books found in category: {Category} by the llm", category);
-            return Results.NotFound();
+            return $"No books found in category: {category}".Split(',').ToList();
         }
     }
-    public async Task<IResult> SearchByCategory(string category)
+    public async Task<List<string>> SearchByCategory(string category)
     {
         try {
 
@@ -263,12 +306,12 @@ public class McpTools
             List<BookModelDto> bookDtos = Mappers.MapToBookDto(books);
             _logger.LogInformation("Retrieved books in category: {Category} by the llm", category);
 
-            return Results.Ok(bookDtos);
+            return bookDtos.Select(b => b.Title).ToList();
         }
         catch
         {
             _logger.LogWarning("No books found in category: {Category} by the llm", category);
-            return Results.NotFound();
+            return $"No books found in category: {category}".Split(',').ToList();
         }
 
     }
