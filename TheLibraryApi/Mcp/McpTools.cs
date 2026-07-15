@@ -121,7 +121,8 @@ public class McpTools
         catch (Exception ex)
         {
            _logger.LogError("Error checking out book: {exceptionMessage} by llm", ex.Message);
-         
+            return $"Error checking out book: {ex.Message}";
+
         }
     }
     [McpServerTool, Description(" a method to check in a book copy")]
@@ -169,7 +170,7 @@ public class McpTools
             var dtoList = Mappers.MapToBookItemsDto(books);
 
             _logger.LogWarning("getting fulfilled books list by the llm ");
-            return $"Books to fulfill: {string.Join(", ", dtoList.Select(b => b.Title))}"   
+            return $"Books to fulfill: {string.Join(", ", dtoList.Select(b => b.Title))}";
         }
         catch (Exception ex)
         {
